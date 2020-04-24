@@ -11,11 +11,13 @@ const ColorList = ({ colors, updateColors }) => {
   console.log(colors)
   const [editing, setEditing] = useState(false)
   const [colorToEdit, setColorToEdit] = useState(initialColor)
+  // color that we will add on addColorForm
+  const [colorToAdd, setColorToAdd] = useState(initialColor)
 
   const editColor = color => {
     setEditing(true)
     setColorToEdit(color)
-    console.log(colorToEdit)
+    console.log(colorToEdit) // can see the 'id' key value pair with this console log
   }
 
   const saveEdit = event => {
@@ -53,7 +55,28 @@ const ColorList = ({ colors, updateColors }) => {
       .catch(error => {
         alert("Could not delete color", error)
       })
+  }
 
+  // method to add new color
+  const addColor = event => {
+    event.preventDefault()
+    
+    // if statement makes sure that user has insert values for both color and hex before post request is made
+    if (colorToAdd.color && colorToAdd.code.hex){
+      axiosWithAuth().post('/api/colors', colorToAdd)
+        .then(response => {
+          console.log(response)
+          // response.data is the full updated color list
+          updateColors(response.data)
+          // reset input values
+          setColorToAdd(initialColor)
+        })
+        .catch(error => {
+          alert('Could not add the new color to the color list', error)
+        })
+    } else {
+      alert('Please provide both a color name value and hex code value')
+    }
   }
 
   return (
@@ -85,7 +108,7 @@ const ColorList = ({ colors, updateColors }) => {
           <label>
             color name:
             <input
-              // use of setColoToEdit in this form shows that colorToEdit.id is the id of the color we want to update in our put request
+              // use of setColorToEdit in this form shows that colorToEdit.id is the id of the color we want to update in our put request
               onChange={e =>
                 setColorToEdit({ ...colorToEdit, color: e.target.value })
               }
@@ -110,8 +133,36 @@ const ColorList = ({ colors, updateColors }) => {
           </div>
         </form>
       )}
-      <div className='spacer' />
+      {/* moved spacer to bottom - explanation below*/}
       {/* stretch - build another form here to add a color */}
+      {!editing && (
+          <form>
+            <legend>Add new color</legend>
+            <label>Color Name:
+              <input
+                onChange={event => 
+                  setColorToAdd({ ...colorToAdd, color: event.target.value })
+                }
+                value={colorToAdd.color}
+              />
+            </label>
+            <label>
+              Hex Code: 
+              <input
+                onChange={event => 
+                  setColorToAdd({
+                    ...colorToAdd,
+                    code: { hex: event.target.value}
+                  })
+                }
+                value={colorToAdd.code.hex}
+              />
+            </label>
+            <button onClick={addColor}>Add Color</button>
+          </form>
+      )}
+      {/* moved 'spacer' down here because it was pushing my add color form to the bottom of my screen in its previous position */}
+      <div className='spacer' />
     </div>
   )
 }
