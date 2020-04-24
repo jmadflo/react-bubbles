@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState } from 'react'
+import Loader from 'react-loader-spinner'
+import { axiosWithAuth } from '../utils/axiosWithAuth'
 
 const Login = () => {
   // make a post request to retrieve a token from the api
@@ -8,7 +10,7 @@ const Login = () => {
       <h1>Welcome to the Bubble App!</h1>
       <p>Build a login page here</p>
     </>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login
