@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { axiosWithAuth } from '../utils/axiosWithAuth'
+import { useHistory } from 'react-router-dom'
 
 const initialColor = {
   color: '',
@@ -8,6 +9,9 @@ const initialColor = {
 }
 
 const ColorList = ({ colors, updateColors }) => {
+
+  const history = useHistory()
+
   console.log(colors)
   const [editing, setEditing] = useState(false)
   const [colorToEdit, setColorToEdit] = useState(initialColor)
@@ -77,6 +81,12 @@ const ColorList = ({ colors, updateColors }) => {
     } else {
       alert('Please provide both a color name value and hex code value')
     }
+  }
+
+  // method to logout by removing token and pushing user to login page
+  const logout = () => {
+    localStorage.removeItem('token')
+    history.push('/')
   }
 
   return (
@@ -158,9 +168,16 @@ const ColorList = ({ colors, updateColors }) => {
                 value={colorToAdd.code.hex}
               />
             </label>
-            <button onClick={addColor}>Add Color</button>
+            {/* added button-row div for styling */}
+            <div className='button-row'> 
+              <button onClick={addColor}>add</button>
+            </div>
+            
           </form>
       )}
+      <div className='button-row'>
+        <button onClick={logout}>Logout</button>
+      </div>
       {/* moved 'spacer' down here because it was pushing my add color form to the bottom of my screen in its previous position */}
       <div className='spacer' />
     </div>
